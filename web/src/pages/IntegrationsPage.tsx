@@ -5,8 +5,10 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useHashRouter } from '../router';
 import { parseApiDate } from '../lib/time';
+import { API_BASE_URL } from '../api/client';
+import { authHeaders } from '../api/auth';
 
-const API_BASE = 'http://localhost:8000/api';
+const API_BASE = `${API_BASE_URL}/api`;
 
 interface IntegrationData {
   tool_name: string;
@@ -65,7 +67,9 @@ const IntegrationsPage: React.FC = () => {
 
   const fetchIntegrations = async () => {
     try {
-      const res = await fetch(`${API_BASE}/integrations`);
+      const res = await fetch(`${API_BASE}/integrations`, {
+        headers: authHeaders(),
+      });
       const data: IntegrationData[] = await res.json();
       setIntegrations(data);
       const newForms: Record<string, IntegrationForm> = {};
@@ -112,7 +116,10 @@ const IntegrationsPage: React.FC = () => {
 
       await fetch(`${API_BASE}/integrations/${tool}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...authHeaders(),
+        },
         body: JSON.stringify(body),
       });
       await fetchIntegrations();
@@ -124,7 +131,10 @@ const IntegrationsPage: React.FC = () => {
   const handleTest = async (tool: string) => {
     setTesting((p) => ({ ...p, [tool]: true }));
     try {
-      const res = await fetch(`${API_BASE}/integrations/${tool}/test`, { method: 'POST' });
+      const res = await fetch(`${API_BASE}/integrations/${tool}/test`, {
+        method: 'POST',
+        headers: authHeaders(),
+      });
       const data = await res.json();
       setTestResults((p) => ({ ...p, [tool]: data }));
       await fetchIntegrations();

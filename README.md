@@ -65,6 +65,20 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 Frontend: **http://localhost:5177**
 Backend: **http://localhost:8000**
 
+### Test in the browser with GitHub Pages
+
+The `main` branch automatically builds and publishes the static frontend to GitHub Pages through `.github/workflows/deploy-pages.yml`. After enabling **Settings → Pages → Source: GitHub Actions** in the repository, the app is available at:
+
+`https://lidless-labs.github.io/hotwash/`
+
+The Pages build supports the offline frontend experience: playbook visualization, bundled examples, authoring, parsing, and hash-based navigation. Execution, persistence, integrations, WebSockets, REST API access, and MCP require a separately hosted FastAPI backend. To connect a deployed frontend to one, configure the Pages build with an HTTPS API URL and allow the Pages origin in the backend CORS configuration:
+
+```bash
+VITE_API_URL=https://api.example.com npm run build
+```
+
+For local development, the Vite proxy targets the backend on port `8000` as shown above.
+
 The web app works offline for visualization without the backend. The backend is required for the execution engine, the REST API, the MCP server, and Wazuh ingest.
 
 ---
